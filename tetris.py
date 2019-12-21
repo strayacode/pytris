@@ -122,7 +122,7 @@ def create_grid():
 	for i in range(10):
 		for j in range(20):
 			grid[(i, j)] = (0, 0, 0)
-	return grid 
+	return grid
 
 def draw_grid(window):
 	global locked_positions
@@ -138,7 +138,7 @@ def draw_window(window):
 		pygame.draw.line(window, (82,82,82), (board_start_x + i*block_size,board_start_y), (board_start_x + i*block_size, board_start_y + 20*block_size), 2)
 		for j in range(21):
 			pygame.draw.line(window, (82,82,82), (board_start_x,board_start_y + j*block_size), (board_start_x + 10*block_size, board_start_y + j*block_size), 2)
-	
+
 def convert_block(x, y, shape, rotation):
 	global grid, temp_positions
 	positions = []
@@ -182,16 +182,16 @@ def clear_row():
 	colours = []
 	for position in grid:
 		colours.append(grid[position])
-	for i in range(20):
-		print(colours[i*10:(i*10)+10])
-				
+	# for i in range(20):
+		# print(colours[i*10:(i*10)+10])
+        # pass
 		# for j in range(20):
 		# if (0, 0, 0) not in colours[i*10:(i*10) + 10]:
 
 			# del colours[i*10:(i*10) + 10]
 			# for j in range(10):
 				# colours.append((0, 0, 0))
-			
+
 		# print(colours)
 	# print(colours)
 def collide_detect(x, y, shape, rotation):
@@ -206,61 +206,64 @@ def collide_detect(x, y, shape, rotation):
 		if position not in valid_positions:
 			if position[1] > 0:
 				return True
-		
+
 	return False
-		
-	
-def main(window): 
-	run = True
-	clock = pygame.time.Clock()
-	x, y, rotation, shape = create_shape(5, 0, 0)
-	rotation = 0
-	grid = create_grid()
-	fall_time = 0
-	while run:
-		fall_time += clock.get_time()
-		if fall_time % 250 == 0:
-			y += 1
-			if collide_detect(x, y, shape, rotation):
-				y -= 1
-				for position in positions:
-					locked_positions[position] = shape_colours[shapes.index(shape)]
-				x, y, rotation, shape = create_shape(5, 0, 0)
-				fall_time = 0
-				clear_row()
-		positions = convert_block(x, y, shape, rotation)
-		for event in pygame.event.get():
-			if event.type == pygame.QUIT:
-				run = False
-			if event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_LEFT:
-					x -= 1
-					if collide_detect(x, y, shape, rotation):
-						x += 1
-				if event.key == pygame.K_RIGHT:
-					x += 1
-					if collide_detect(x, y, shape, rotation):
-						x -= 1
-				if event.key == pygame.K_DOWN:
-					y += 1
-					if collide_detect(x, y, shape, rotation):
-						y -= 1
-						for position in positions:
-							locked_positions[position] = shape_colours[shapes.index(shape)]
-						x, y, rotation, shape = create_shape(5, 0, 0)
-						fall_time = 0
-						clear_row()
-				if event.key == pygame.K_f:
-					rotation -= 1
-				if event.key == pygame.K_d:
-					rotation += 1
-		positions = convert_block(x, y, shape, rotation)
-		draw_window(window)
-		if check_lost():
-			run = False
-		pygame.display.update()
-		
-		clock.tick()
+
+
+def main(window):
+    run = True
+    clock = pygame.time.Clock()
+    x, y, rotation, shape = create_shape(5, 0, 0)
+    rotation = 0
+    grid = create_grid()
+    fall_time = 0
+    while run:
+        fall_time += clock.get_time()
+        if fall_time % 250 == 0:
+            y += 1
+            if collide_detect(x, y, shape, rotation):
+                y -= 1
+                for position in positions:
+                    locked_positions[position] = shape_colours[shapes.index(shape)]
+                    x, y, rotation, shape = create_shape(5, 0, 0)
+                    fall_time = 0
+                    clear_row()
+                    positions = convert_block(x, y, shape, rotation)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    x -= 1
+                    if collide_detect(x, y, shape, rotation):
+                        x += 1
+                if event.key == pygame.K_RIGHT:
+                    x += 1
+                    if collide_detect(x, y, shape, rotation):
+                        x -= 1
+                if event.key == pygame.K_DOWN:
+                    y += 1
+                    if collide_detect(x, y, shape, rotation):
+                        y -= 1
+                        for position in positions:
+                            locked_positions[position] = shape_colours[shapes.index(shape)]
+                            x, y, rotation, shape = create_shape(5, 0, 0)
+                            fall_time = 0
+                            # clear_row()
+                if event.key == pygame.K_f:
+                    rotation -= 1
+                    if collide_detect(x, y, shape, rotation):
+                        rotation += 1
+                if event.key == pygame.K_d:
+                    rotation += 1
+                    if collide_detect(x, y, shape, rotation):
+                        rotation -= 1
+            positions = convert_block(x, y, shape, rotation)
+        draw_window(window)
+        if check_lost():
+            run = False
+        pygame.display.update()
+        clock.tick()
 
 
 def main_menu():
@@ -282,4 +285,3 @@ Plan:
 . update screen
 
 """
-
