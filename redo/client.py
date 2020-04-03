@@ -10,6 +10,9 @@ pygame.init()
 window = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Tetris")
 
+
+
+
 S = [[
 		"011",
 		"110",
@@ -161,7 +164,6 @@ class Tetronimo:
 		self.rotation = 0
 		self.previous_state = []
 		self.shape = self.get_tetronimo()
-		self.update_grid()
 
 	def get_tetronimo(self):
 		return random.choice(shapes)
@@ -233,11 +235,17 @@ class Tetronimo:
 				for j in range(len(self.grid.locked_positions)):
 					if self.grid.locked_positions[j][0] <= i + 1:
 						position = list(self.grid.locked_positions[j])
-						# print(new_position)
 						position[0] += 1
-						# print(new_position)
 						position = tuple(position)
 						self.grid.locked_positions[j] = position
+				self.grid.total_lines += 1
+				self.grid.display_info(self.window)
+
+	def hard_drop(self):
+		while self.collision()[0] == False:
+			self.y += 1
+		self.y -= 1
+
 
 def check_lost(positions):
 		for position in positions:
@@ -250,8 +258,7 @@ def main():
 	run = True
 	clock = pygame.time.Clock()
 	fall_time = 0
-	fall_speed = 1
-
+	fall_speed = 0.2
 
 	screen = Grid(10, 10, 20, window)
 	piece = Tetronimo(screen, window)
@@ -259,6 +266,7 @@ def main():
 
 
 	while run:
+
 		fall_time += clock.get_rawtime()
 		clock.tick()
 		if fall_time / 1000 > fall_speed:
@@ -308,13 +316,12 @@ def main():
 					if piece.collision()[0]:
 						piece.rotation_ccw()
 
-				if event.key == pygame.K_SPACE:
-					while piece.collision()[0] == False:
-						print(piece.y)
-						piece.y += 1
-					# piece.clear_row()
-					piece = Tetronimo(screen, window)
-		
+				# if event.key == pygame.K_SPACE:
+				# 	piece.hard_drop()
+
+					
+				# 	piece.clear_row()
+				# 	piece.update_grid()
 		piece.update_grid()
 		pygame.display.update()
 main()

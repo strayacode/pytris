@@ -4,14 +4,20 @@ import pygame
 class Grid:
 	colours = {0: (0, 0, 0), 1: (178, 250, 180), 2: (222, 98, 91), 3: (74, 178, 199), 4: (227, 221, 107), 5: (235, 167, 84), 6: (104, 174, 217), 7: (208, 111, 227)}
 	dark_grey = ((50, 50, 50))
+	pygame.font.init()
+	font = pygame.font.Font("visitor1.ttf", 20) 
+	
+
 	def __init__(self, x, y, block_size, window):
 		self.x = x
 		self.y = y
 		self.block_size = block_size
 		self.window = window
 		self.locked_positions = []
+		self.total_lines = 0
 		self.grid = self.create_grid()
 		self.draw_board(self.window)
+		self.display_info(self.window)
 
 	def create_grid(self):
 		grid = []
@@ -32,4 +38,8 @@ class Grid:
 				# print(self.grid[i][j])
 				pygame.draw.rect(window, self.colours[self.grid[i][j]], (self.x + self.block_size*j, self.y + self.block_size*i, self.block_size, self.block_size))
 
+
+	def display_info(self, window):
+		textsurface = self.font.render(f"LINES: {self.total_lines}", True, (255, 255, 255), (0, 0, 0))
+		window.blit(textsurface, (self.x + 20*self.block_size, self.y + 1*self.block_size))
 	
