@@ -289,6 +289,13 @@ class Tetronimo:
 			self.y += 1
 			count += 1
 		self.y -= count
+		print(self.y + count)
+		for i in range(len(self.shape[self.rotation])):
+			for j in range(len(self.shape[self.rotation])):
+				if self.shape[self.rotation][i][j] != "0":
+					print(self.grid.y + (self.y + count)*self.grid.block_size + i*self.grid.block_size)
+					colour = (self.grid.colours[int(self.shape[self.rotation][i][j])][0] - 74, self.grid.colours[int(self.shape[self.rotation][i][j])][1] - 74, self.grid.colours[int(self.shape[self.rotation][i][j])][2] - 74)
+					pygame.draw.rect(self.window, colour, (self.grid.x + self.x*self.grid.block_size + self.grid.block_size*j, self.grid.y + (self.y + count - 1)*self.grid.block_size + i*self.grid.block_size, self.grid.block_size, self.grid.block_size))
 
 
 
@@ -400,7 +407,7 @@ def main():
 		if move_left:
 
 			move_left_times += 1
-			if move_left_times > 150:
+			if move_left_times > 100:
 				piece.x -= 1
 				piece.draw_shadow()
 				if piece.collision()[0]: 
@@ -409,14 +416,17 @@ def main():
 
 		if move_right:
 			move_right_times += 1
-			if move_right_times > 150:
+			if move_right_times > 100:
 				piece.x += 1
 				piece.draw_shadow()
 				if piece.collision()[0]: 
 					piece.x -= 1
 				pygame.time.wait(30)
+		
 		screen.draw_board(window)
+		piece.draw_shadow()
 		piece.update_grid()
+		
 		screen.display_info(window)
 		pygame.display.update()
 main()

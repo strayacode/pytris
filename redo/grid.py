@@ -3,7 +3,7 @@ import pygame
 
 class Grid:
 	colours = {0: (0, 0, 0), 1: (178, 250, 180), 2: (222, 98, 91), 3: (74, 178, 199), 4: (227, 221, 107), 5: (235, 167, 84), 6: (104, 174, 217), 7: (208, 111, 227)}
-	dark_grey = ((50, 50, 50))
+	dark_grey = ((30, 30, 30))
 	pygame.font.init()
 	font = pygame.font.Font("visitor1.ttf", 20) 
 	
@@ -29,17 +29,19 @@ class Grid:
 		return grid
 
 	def draw_board(self, window):
-		for i in range(11):
-			pygame.draw.line(window, self.dark_grey, (self.x + i*self.block_size, self.y), (self.x + i*self.block_size, self.y + 20*self.block_size))
+		pygame.draw.rect(window, self.dark_grey, (self.x, self.y, 10*self.block_size, 20*self.block_size))
+		# for i in range(11):
+		# 	pygame.draw.line(window, self.dark_grey, (self.x + i*self.block_size, self.y), (self.x + i*self.block_size, self.y + 20*self.block_size))
 
-		for j in range(21):
-			pygame.draw.line(window, self.dark_grey, (self.x, self.y + j*self.block_size), (self.x + 10*self.block_size, self.y + j*self.block_size))
+		# for j in range(21):
+		# 	pygame.draw.line(window, self.dark_grey, (self.x, self.y + j*self.block_size), (self.x + 10*self.block_size, self.y + j*self.block_size))
 
 	def draw_grid(self, window):
 		for i in range(20):
 			for j in range(10):
 				# print(self.grid[i][j])
-				pygame.draw.rect(window, self.colours[self.grid[i][j]], (self.x + self.block_size*j, self.y + self.block_size*i, self.block_size, self.block_size))
+				if self.grid[i][j] != 0:
+					pygame.draw.rect(window, self.colours[self.grid[i][j]], (self.x + self.block_size*j, self.y + self.block_size*i, self.block_size, self.block_size))
 
 
 	def display_info(self, window):
