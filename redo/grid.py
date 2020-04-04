@@ -13,9 +13,10 @@ class Grid:
 		self.y = y
 		self.block_size = block_size
 		self.window = window
-		self.locked_positions = []
 		self.total_lines = 0
+		self.level = 1
 		self.grid = self.create_grid()
+		self.locked_positions = []
 		self.draw_board(self.window)
 		self.display_info(self.window)
 
@@ -40,6 +41,8 @@ class Grid:
 
 
 	def display_info(self, window):
-		textsurface = self.font.render(f"LINES: {self.total_lines}", True, (255, 255, 255), (0, 0, 0))
-		window.blit(textsurface, (self.x + 20*self.block_size, self.y + 1*self.block_size))
+		lines = self.font.render(f"LINES: {self.total_lines}", True, (255, 255, 255), (0, 0, 0))
+		level = self.font.render(f"LEVEL: {self.level}", True, (255, 255, 255), (0, 0, 0))
+		window.blit(lines, (self.x + 15*self.block_size, self.y + 1*self.block_size))
+		window.blit(level, (self.x + 15*self.block_size, self.y + 1*self.block_size + 50))
 	

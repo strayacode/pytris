@@ -199,6 +199,8 @@ class Tetronimo:
 				if self.shape[self.rotation][i][j] != "0":
 					block_positions.append((self.y + i, self.x + j))
 
+
+
 		for position in block_positions:
 			if position not in valid_positions:
 
@@ -226,20 +228,41 @@ class Tetronimo:
 				self.grid.grid.pop(i)
 				self.grid.grid.insert(0, [0 for j in range(11)])
 
+
+
+				
 				# delete row from lock_positions
+				for locked_position in self.grid.locked_positions:
+					if locked_position[0] == i + 1:	
+						self.grid.locked_positions.remove(locked_position)
 				for locked_position in self.grid.locked_positions:
 					if locked_position[0] == i + 1:
 						self.grid.locked_positions.remove(locked_position)
 
+				for locked_position in self.grid.locked_positions:
+					if locked_position[0] == i + 1:
+						self.grid.locked_positions.remove(locked_position)
+
+				for locked_position in self.grid.locked_positions:
+					if locked_position[0] == i + 1:
+						self.grid.locked_positions.remove(locked_position)
+				for locked_position in self.grid.locked_positions:
+					if locked_position[0] == i + 1:
+						self.grid.locked_positions.remove(locked_position)
 				# add 1 to all lock_position y values
 				for j in range(len(self.grid.locked_positions)):
-					if self.grid.locked_positions[j][0] <= i + 1:
+					if self.grid.locked_positions[j][0] < i + 1:
 						position = list(self.grid.locked_positions[j])
 						position[0] += 1
 						position = tuple(position)
 						self.grid.locked_positions[j] = position
+				# print(self.grid.locked_positions)
+
 				self.grid.total_lines += 1
 				self.grid.display_info(self.window)
+
+
+
 
 	def hard_drop(self):
 		while self.collision()[0] == False:
