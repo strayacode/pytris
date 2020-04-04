@@ -339,12 +339,12 @@ def main():
 					if piece.collision()[0]:
 						piece.rotation_ccw()
 
-				# if event.key == pygame.K_SPACE:
-				# 	piece.hard_drop()
+				if event.key == pygame.K_SPACE:
+					piece.hard_drop()
 
 					
-				# 	piece.clear_row()
-				# 	piece.update_grid()
+					piece.clear_row()
+					piece.update_grid()
 		piece.update_grid()
 		pygame.display.update()
 main()
