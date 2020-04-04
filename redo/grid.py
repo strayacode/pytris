@@ -29,7 +29,7 @@ class Grid:
 		return grid
 
 	def draw_board(self, window):
-		pygame.draw.rect(window, self.dark_grey, (self.x, self.y, 10*self.block_size, 20*self.block_size))
+		pygame.draw.rect(window, self.dark_grey, (self.x, self.y, 10*self.block_size, 20*self.block_size), 2)
 		# for i in range(11):
 		# 	pygame.draw.line(window, self.dark_grey, (self.x + i*self.block_size, self.y), (self.x + i*self.block_size, self.y + 20*self.block_size))
 

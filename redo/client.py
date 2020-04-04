@@ -289,20 +289,22 @@ class Tetronimo:
 			self.y += 1
 			count += 1
 		self.y -= count
-		print(self.y + count)
 		for i in range(len(self.shape[self.rotation])):
 			for j in range(len(self.shape[self.rotation])):
 				if self.shape[self.rotation][i][j] != "0":
-					print(self.grid.y + (self.y + count)*self.grid.block_size + i*self.grid.block_size)
 					colour = (self.grid.colours[int(self.shape[self.rotation][i][j])][0] - 74, self.grid.colours[int(self.shape[self.rotation][i][j])][1] - 74, self.grid.colours[int(self.shape[self.rotation][i][j])][2] - 74)
 					pygame.draw.rect(self.window, colour, (self.grid.x + self.x*self.grid.block_size + self.grid.block_size*j, self.grid.y + (self.y + count - 1)*self.grid.block_size + i*self.grid.block_size, self.grid.block_size, self.grid.block_size))
 
 
 
 	def hard_drop(self):
-		while self.collision()[0] == False:
+		collide = self.collision()
+		while collide[0] == False:
 			self.y += 1
+			collide = self.collision()
 		self.y -= 1
+		self.update_grid()
+		self.grid.locked_positions += collide[1]
 
 	def generate_queue(self):
 		for i in range(7):
@@ -320,7 +322,7 @@ def main():
 	run = True
 	clock = pygame.time.Clock()
 	fall_time = 0
-	fall_speed = 0.2
+	fall_speed = 1
 	move_left = False
 	move_right = False
 	screen = Grid(10, 10, 20, window)
@@ -392,8 +394,11 @@ def main():
 					piece.hard_drop()
 
 					
+
 					piece.clear_row()
-					piece.update_grid()
+					piece = Tetronimo(screen, window)
+					screen.display_info(window)
+					
 				
 			if event.type == pygame.KEYUP:
 				if event.key == pygame.K_LEFT:
@@ -430,3 +435,6 @@ def main():
 		screen.display_info(window)
 		pygame.display.update()
 main()
+
+
+# FIX: bug where another rectangle is drawn when tetronimo hits an edge
