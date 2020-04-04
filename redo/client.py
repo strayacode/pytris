@@ -164,6 +164,7 @@ class Tetronimo:
 		self.rotation = 0
 		self.previous_state = []
 		self.shape = self.get_tetronimo()
+		self.draw_shadow()
 
 	def get_tetronimo(self):
 		return random.choice(shapes)
@@ -262,6 +263,13 @@ class Tetronimo:
 				self.grid.display_info(self.window)
 
 
+	def draw_shadow(self):
+		count = 0
+		while self.collision()[0] == False:
+			self.y += 1
+			count += 1
+		self.y -= count
+		print(count)
 
 
 	def hard_drop(self):
@@ -312,10 +320,12 @@ def main():
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_LEFT:
 					piece.x -= 1
+					piece.draw_shadow()
 					if piece.collision()[0]: 
 						piece.x += 1
 				if event.key == pygame.K_RIGHT:
 					piece.x += 1
+					piece.draw_shadow()
 					if piece.collision()[0]:
 						piece.x -= 1
 				if event.key == pygame.K_DOWN:
