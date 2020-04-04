@@ -5,7 +5,7 @@ import sys
 import time
 
 width = 500
-height = 500
+height = 600
 
 pygame.init()
 window = pygame.display.set_mode((width, height))
@@ -225,7 +225,7 @@ class Tetronimo:
 		self.rotation = (self.rotation - 1) % len(self.shape)
 
 	def clear_row(self):
-		
+		lines_cleared = 0
 		for i in range(len(self.grid.grid)):
 			count = 0
 			for j in range(10):
@@ -267,8 +267,19 @@ class Tetronimo:
 				# print(self.grid.locked_positions)
 
 				self.grid.total_lines += 1
+				lines_cleared += 1
 				
+		if lines_cleared == 1:
+			self.grid.score += 40 * (self.grid.level + 1)
 
+		elif lines_cleared == 2:
+			self.grid.score += 100 * (self.grid.level + 1)
+
+		elif lines_cleared == 3:
+			self.grid.score += 300 * (self.grid.level + 1)
+
+		elif lines_cleared == 4:
+			self.grid.score += 1200 * (self.grid.level + 1)
 
 	def draw_shadow(self):
 
@@ -287,7 +298,7 @@ class Tetronimo:
 		self.y -= 1
 
 	def generate_queue(self):
-		for i in range(5):
+		for i in range(7):
 			self.grid.queue.append(self.get_tetronimo())
 
 

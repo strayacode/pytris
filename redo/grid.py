@@ -15,6 +15,7 @@ class Grid:
 		self.window = window
 		self.total_lines = 0
 		self.level = 1
+		self.score = 0
 		self.grid = self.create_grid()
 		self.locked_positions = []
 		self.queue = []
@@ -46,13 +47,42 @@ class Grid:
 		level = self.font.render(f"LEVEL: {self.level}", True, (255, 255, 255), (0, 0, 0))
 
 		next_shape = self.font.render(f"NEXT", True, (255, 255, 255), (0, 0, 0))
-
-		window.blit(lines, (self.x + 15*self.block_size, self.y + 1*self.block_size))
-		window.blit(level, (self.x + 15*self.block_size, self.y + 1*self.block_size + 50))
-		window.blit(next_shape, (self.x + 15*self.block_size, self.y + 1*self.block_size + 100))
-
+		score = self.font.render(f"SCORE: {self.score}", True, (255, 255, 255), (0, 0, 0))
+		window.blit(lines, (self.x + 11*self.block_size, self.y + 1*self.block_size))
+		window.blit(level, (self.x + 11*self.block_size, self.y + 1*self.block_size + 50))
+		window.blit(next_shape, (self.x + 19*self.block_size, self.y + 1*self.block_size))
+		window.blit(score, (self.x + 11*self.block_size, self.y + 1*self.block_size + 100))
 		for i in range(len(self.queue[1][0])):
 			for j in range(len(self.queue[1][0][i])):
 				# print(self.queue[0][0][i][j])
-				pygame.draw.rect(window, self.colours[int(self.queue[1][0][i][j])], (self.x + j*self.block_size + 300, self.y + self.block_size*i + 175, self.block_size, self.block_size))
+				pygame.draw.rect(window, self.colours[int(self.queue[1][0][i][j])], (self.x + j*self.block_size + 380, self.y + self.block_size*i + 50, self.block_size, self.block_size))
+
+
+		for i in range(len(self.queue[2][0])):
+			for j in range(len(self.queue[2][0][i])):
+				# print(self.queue[0][0][i][j])
+				pygame.draw.rect(window, self.colours[int(self.queue[2][0][i][j])], (self.x + j*self.block_size + 380, self.y + self.block_size*i + 125, self.block_size, self.block_size))
+
+
+		for i in range(len(self.queue[3][0])):
+			for j in range(len(self.queue[3][0][i])):
+				# print(self.queue[0][0][i][j])
+				pygame.draw.rect(window, self.colours[int(self.queue[3][0][i][j])], (self.x + j*self.block_size + 380, self.y + self.block_size*i + 200, self.block_size, self.block_size))
+
+		for i in range(len(self.queue[4][0])):
+			for j in range(len(self.queue[4][0][i])):
+				# print(self.queue[0][0][i][j])
+				pygame.draw.rect(window, self.colours[int(self.queue[4][0][i][j])], (self.x + j*self.block_size + 380, self.y + self.block_size*i + 275, self.block_size, self.block_size))
+
+
+		for i in range(len(self.queue[5][0])):
+			for j in range(len(self.queue[5][0][i])):
+				# print(self.queue[0][0][i][j])
+				pygame.draw.rect(window, self.colours[int(self.queue[5][0][i][j])], (self.x + j*self.block_size + 380, self.y + self.block_size*i + 350, self.block_size, self.block_size))
+
+
+		for i in range(len(self.queue[6][0])):
+			for j in range(len(self.queue[6][0][i])):
+				# print(self.queue[0][0][i][j])
+				pygame.draw.rect(window, self.colours[int(self.queue[6][0][i][j])], (self.x + j*self.block_size + 380, self.y + self.block_size*i + 425, self.block_size, self.block_size))
 	
