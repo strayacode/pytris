@@ -2,6 +2,7 @@ import pygame
 from grid import Grid
 import random
 import sys
+import time
 
 width = 500
 height = 500
@@ -163,7 +164,13 @@ class Tetronimo:
 		self.y = 0
 		self.rotation = 0
 		self.previous_state = []
-		self.shape = self.get_tetronimo()
+		if len(self.grid.queue) == 0:
+			self.generate_queue()
+		else:
+			self.grid.queue.pop(0)
+			self.grid.queue.append(self.get_tetronimo())
+		self.shape = self.grid.queue[0]
+		# print(self.grid.queue)
 		self.draw_shadow()
 
 	def get_tetronimo(self):
@@ -260,22 +267,28 @@ class Tetronimo:
 				# print(self.grid.locked_positions)
 
 				self.grid.total_lines += 1
-				self.grid.display_info(self.window)
+				
 
 
 	def draw_shadow(self):
+
 		count = 0
+		self.shape[self.rotation]
 		while self.collision()[0] == False:
 			self.y += 1
 			count += 1
 		self.y -= count
-		print(count)
+
 
 
 	def hard_drop(self):
 		while self.collision()[0] == False:
 			self.y += 1
 		self.y -= 1
+
+	def generate_queue(self):
+		for i in range(5):
+			self.grid.queue.append(self.get_tetronimo())
 
 
 def check_lost(positions):
@@ -290,14 +303,16 @@ def main():
 	clock = pygame.time.Clock()
 	fall_time = 0
 	fall_speed = 0.2
-
+	move_left = False
+	move_right = False
 	screen = Grid(10, 10, 20, window)
 	piece = Tetronimo(screen, window)
+	move_left_times = 0
+	move_right_times = 0
 
-
-
+	
 	while run:
-
+		window.fill((0, 0, 0))
 		fall_time += clock.get_rawtime()
 		clock.tick()
 		if fall_time / 1000 > fall_speed:
@@ -312,6 +327,7 @@ def main():
 					sys.exit()
 				piece.clear_row()
 				piece = Tetronimo(screen, window)
+				screen.display_info(window)
 
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -323,11 +339,15 @@ def main():
 					piece.draw_shadow()
 					if piece.collision()[0]: 
 						piece.x += 1
+					move_left = True
+					
 				if event.key == pygame.K_RIGHT:
 					piece.x += 1
 					piece.draw_shadow()
-					if piece.collision()[0]:
+					if piece.collision()[0]: 
 						piece.x -= 1
+					move_right = True
+					
 				if event.key == pygame.K_DOWN:
 					piece.y += 1
 					collide = piece.collision()
@@ -339,6 +359,7 @@ def main():
 							sys.exit()
 						piece.clear_row()
 						piece = Tetronimo(screen, window)
+						screen.display_info(window)
 
 				if event.key == pygame.K_z:
 					piece.rotation_ccw()
@@ -355,6 +376,36 @@ def main():
 					
 					piece.clear_row()
 					piece.update_grid()
+				
+			if event.type == pygame.KEYUP:
+				if event.key == pygame.K_LEFT:
+					move_left = False
+					move_left_times = 0
+				if event.key == pygame.K_RIGHT:
+					move_right = False
+					move_right_times = 0
+
+
+		if move_left:
+
+			move_left_times += 1
+			if move_left_times > 150:
+				piece.x -= 1
+				piece.draw_shadow()
+				if piece.collision()[0]: 
+					piece.x += 1
+				pygame.time.wait(30)
+
+		if move_right:
+			move_right_times += 1
+			if move_right_times > 150:
+				piece.x += 1
+				piece.draw_shadow()
+				if piece.collision()[0]: 
+					piece.x -= 1
+				pygame.time.wait(30)
+		screen.draw_board(window)
 		piece.update_grid()
+		screen.display_info(window)
 		pygame.display.update()
 main()

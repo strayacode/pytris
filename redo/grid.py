@@ -17,8 +17,9 @@ class Grid:
 		self.level = 1
 		self.grid = self.create_grid()
 		self.locked_positions = []
+		self.queue = []
 		self.draw_board(self.window)
-		self.display_info(self.window)
+		# self.display_info(self.window)
 
 	def create_grid(self):
 		grid = []
@@ -43,6 +44,15 @@ class Grid:
 	def display_info(self, window):
 		lines = self.font.render(f"LINES: {self.total_lines}", True, (255, 255, 255), (0, 0, 0))
 		level = self.font.render(f"LEVEL: {self.level}", True, (255, 255, 255), (0, 0, 0))
+
+		next_shape = self.font.render(f"NEXT", True, (255, 255, 255), (0, 0, 0))
+
 		window.blit(lines, (self.x + 15*self.block_size, self.y + 1*self.block_size))
 		window.blit(level, (self.x + 15*self.block_size, self.y + 1*self.block_size + 50))
+		window.blit(next_shape, (self.x + 15*self.block_size, self.y + 1*self.block_size + 100))
+
+		for i in range(len(self.queue[1][0])):
+			for j in range(len(self.queue[1][0][i])):
+				# print(self.queue[0][0][i][j])
+				pygame.draw.rect(window, self.colours[int(self.queue[1][0][i][j])], (self.x + j*self.block_size + 300, self.y + self.block_size*i + 175, self.block_size, self.block_size))
 	
