@@ -1,19 +1,21 @@
 import pygame
 from grid import Grid
+from interface import Button
+from network import Network
+import threading
 import random
 import sys
 import os
+import json
 
-width = 500
+width = 1000
 height = 600
 
 pygame.init()
 window = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Tetris")
-pygame.mixer.init()
-hit_sound = pygame.mixer.Sound("/home/straya/code/python/pytris/menu-options-click.wav")
 
-line_clear_sound = pygame.mixer.Sound("/home/straya/code/python/pytris/menu-multiplayer-click.wav")
+
 
 S = [[
 		"011",
@@ -188,7 +190,7 @@ class Tetronimo:
 					self.previous_state.append((self.y + i, self.x + j))
 					self.grid.grid[self.y + i][self.x + j] = int(self.shape[self.rotation][i][j])
 
-		self.grid.draw_grid(window)
+		self.grid.draw_grid()
 
 
 	def collision(self):
@@ -285,10 +287,10 @@ class Tetronimo:
 			self.grid.score += 1200 * (self.grid.level + 1)
 		
 		
-		if lines_cleared > 0:
-			pygame.mixer.Sound.play(line_clear_sound)
-		else:
-			pygame.mixer.Sound.play(hit_sound)
+		# if lines_cleared > 0:
+		# 	pygame.mixer.Sound.play(line_clear_sound)
+		# else:
+		# 	pygame.mixer.Sound.play(hit_sound)
 
 	def draw_shadow(self):
 
@@ -327,7 +329,7 @@ def check_lost(positions):
 
 		return False
 	
-def main():
+def modern_mode():
 	run = True
 	clock = pygame.time.Clock()
 	fall_time = 0
@@ -335,7 +337,7 @@ def main():
 	move_left = False
 	move_right = False
 	move_down = False
-	screen = Grid(10, 10, 20, window)
+	screen = Grid(10, 10, 20, window, "modern")
 	piece = Tetronimo(screen, window)
 	move_left_times = 0
 	move_right_times = 0
@@ -356,10 +358,9 @@ def main():
 				screen.locked_positions += collide[1]
 				if check_lost(collide[1]):
 					run = False
-					sys.exit()
 				
 				piece = Tetronimo(screen, window)
-				screen.display_info(window)
+				screen.display_info()
 
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -386,11 +387,10 @@ def main():
 						screen.locked_positions += collide[1]
 						if check_lost(collide[1]):
 							run = False
-							sys.exit()
 						piece.clear_row()
 						
 						piece = Tetronimo(screen, window)
-						screen.display_info(window)
+						screen.display_info()
 					move_down = True
 						
 						
@@ -410,7 +410,7 @@ def main():
 					piece.hard_drop()
 					piece.clear_row()
 					piece = Tetronimo(screen, window)
-					screen.display_info(window)
+					screen.display_info()
 					
 				
 			if event.type == pygame.KEYUP:
@@ -452,13 +452,316 @@ def main():
 					piece.y -= 1
 				pygame.time.wait(30)
 		
-		screen.draw_board(window)
+		screen.draw_board()
 		piece.draw_shadow()
 		piece.update_grid()
 		
-		screen.display_info(window)
+		screen.display_info()
 		pygame.display.update()
-main()
+
+
+def classic_mode():
+	run = True
+	clock = pygame.time.Clock()
+	fall_time = 0
+	fall_speed = 1
+	
+	screen = Grid(10, 10, 20, window, "classic")
+	piece = Tetronimo(screen, window)
+	
+	while run:
+		window.fill((0, 0, 0))
+		fall_time += clock.get_rawtime()
+		clock.tick()
+		if fall_time / 1000 > fall_speed:
+			fall_time = 0
+			piece.y += 1
+			collide = piece.collision()
+			if collide[0]:
+				piece.y -= 1
+				screen.locked_positions += collide[1]
+				if check_lost(collide[1]):
+					run = False
+				
+				piece = Tetronimo(screen, window)
+				screen.display_info()
+
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				run = False
+				sys.exit()
+			if event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_LEFT:
+					piece.x -= 1
+					if piece.collision()[0]: 
+						piece.x += 1
+					
+					
+				if event.key == pygame.K_RIGHT:
+					piece.x += 1
+					if piece.collision()[0]: 
+						piece.x -= 1
+					
+					
+				if event.key == pygame.K_DOWN:
+					piece.y += 1
+					collide = piece.collision()
+					if collide[0]:
+						piece.y -= 1
+						screen.locked_positions += collide[1]
+						if check_lost(collide[1]):
+							run = False
+						piece.clear_row()
+						
+						piece = Tetronimo(screen, window)
+						screen.display_info()
+					
+						
+						
+						
+						
+
+				if event.key == pygame.K_z:
+					piece.rotation_ccw()
+					if piece.collision()[0]:
+						piece.rotation_cw()
+				if event.key == pygame.K_x:
+					piece.rotation_cw()
+					if piece.collision()[0]:
+						piece.rotation_ccw()
+		
+		screen.draw_board()
+		piece.update_grid()
+		screen.display_info()
+		pygame.display.update()
+
+
+
+
+def multiplayer_modern_mode():
+
+	
+	run = True
+	clock = pygame.time.Clock()
+	fall_time = 0
+	fall_speed = 1
+	move_left = False
+	move_right = False
+	move_down = False
+	p1 = Grid(10, 10, 20, window, "modern")
+	piece = Tetronimo(p1, window)
+	move_left_times = 0
+	move_right_times = 0
+	move_down_times = 0
+	p2 = Grid(600, 10, 20, window, "modern")
+	
+	FORMAT = "utf-8"
+	n = Network()
+	
+	
+	
+	
+	while run:
+		window.fill((0, 0, 0))
+		fall_time += clock.get_rawtime()
+		clock.tick()
+		if fall_time / 1000 > fall_speed:
+			fall_time = 0
+			piece.y += 1
+			collide = piece.collision()
+			if collide[0]:
+				piece.y -= 1
+				p1.locked_positions += collide[1]
+				if check_lost(collide[1]):
+					n.send("!DISCONNECT")
+					run = False
+				
+				piece = Tetronimo(p1, window)
+				p1.display_info()
+
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				
+				n.send("!DISCONNECT")
+				run = False
+				sys.exit()
+			if event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_LEFT:
+					piece.x -= 1
+					if piece.collision()[0]: 
+						piece.x += 1
+					move_left = True
+					
+				if event.key == pygame.K_RIGHT:
+					piece.x += 1
+					if piece.collision()[0]: 
+						piece.x -= 1
+					move_right = True
+					
+				if event.key == pygame.K_DOWN:
+					piece.y += 1
+					collide = piece.collision()
+					if collide[0]:
+						piece.y -= 1
+						p1.locked_positions += collide[1]
+						if check_lost(collide[1]):
+							n.send("!DISCONNECT")
+							run = False
+						piece.clear_row()
+						
+						piece = Tetronimo(p1, window)
+						p1.display_info()
+					move_down = True
+						
+						
+						
+						
+
+				if event.key == pygame.K_z:
+					piece.rotation_ccw()
+					if piece.collision()[0]:
+						piece.rotation_cw()
+				if event.key == pygame.K_x:
+					piece.rotation_cw()
+					if piece.collision()[0]:
+						piece.rotation_ccw()
+
+				if event.key == pygame.K_SPACE:
+					piece.hard_drop()
+					piece.clear_row()
+					piece = Tetronimo(p1, window)
+					p1.display_info()
+					
+				
+			if event.type == pygame.KEYUP:
+				if event.key == pygame.K_LEFT:
+					move_left = False
+					move_left_times = 0
+				if event.key == pygame.K_RIGHT:
+					move_right = False
+					move_right_times = 0
+				if event.key == pygame.K_DOWN:
+					move_down = False
+					move_down_times = 0
+
+
+		if move_left:
+
+			move_left_times += 1
+			if move_left_times > 50:
+				piece.x -= 1
+				# piece.draw_shadow()
+				if piece.collision()[0]: 
+					piece.x += 1
+				pygame.time.wait(30)
+
+		if move_right:
+			move_right_times += 1
+			if move_right_times > 50:
+				piece.x += 1
+				# piece.draw_shadow()
+				if piece.collision()[0]: 
+					piece.x -= 1
+				pygame.time.wait(30)
+
+		if move_down:
+			move_down_times += 1
+			if move_down_times > 50:
+				piece.y += 1
+				if piece.collision()[0]: 
+					piece.y -= 1
+				pygame.time.wait(30)
+		
+
+		p1.draw_board()
+		piece.draw_shadow()
+		piece.update_grid()
+		p1.display_info()
+		# send grid
+		data = json.dumps(p1.grid)
+		p2data = n.send(data)
+		try:
+			p2data = json.loads(p2data)
+			p2.grid = p2data
+			p2.draw_board()
+			p2.draw_grid()
+		except TypeError:
+			pass
+		
+		
+		
+
+		
+		
+		
+		pygame.display.update()
+
+def main_menu():
+	run = True
+	single = Button(0, 0, 200, 50, (0, 0, 0), (255, 255, 255), "Singleplayer", window)
+	multi = Button(0, 100, 200, 50, (0, 0, 0), (255, 255, 255), "Multiplayer", window)
+	quit = Button(0, 200, 200, 50, (0, 0, 0), (255, 255, 255), "Quit", window)
+	while run:
+		for event in pygame.event.get():
+			pos = pygame.mouse.get_pos()
+			if event.type == pygame.QUIT:
+				run = False
+				sys.exit()
+
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				if event.button == 1:
+					if single.enter(pos):
+						singleplayer()
+					elif multi.enter(pos):
+						multiplayer_modern_mode()
+					elif quit.enter(pos):
+						run = False
+						sys.exit()
+		window.fill((0, 0, 0))
+		single.draw()
+		multi.draw()
+		quit.draw()
+		pygame.display.update()
+
+def singleplayer():
+	run = True
+	modern = Button(0, 0, 200, 50, (0, 0, 0), (255, 255, 255), "Modern Mode", window)
+	classic = Button(0, 100, 200, 50, (0, 0, 0), (255, 255, 255), "Classic Mode", window)
+	back = Button(0, 200, 200, 50, (0, 0, 0), (255, 255, 255), "Back", window)
+	while run:
+		for event in pygame.event.get():
+			pos = pygame.mouse.get_pos()
+			if event.type == pygame.QUIT:
+				run = False
+				sys.exit()
+
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				if event.button == 1:
+					if modern.enter(pos):
+						modern_mode()
+					elif classic.enter(pos):
+						classic_mode()
+					elif back.enter(pos):
+						run = False
+						
+		window.fill((0, 0, 0))
+		modern.draw()
+		classic.draw()
+		back.draw()
+		pygame.display.update()
+
+
+	
+	
+	
+	
+	
+	
+	
+		
+
+
+main_menu()
 
 
 # FIX: bug where another rectangle is drawn when tetronimo hits an edge
