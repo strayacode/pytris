@@ -7,3 +7,7 @@ tetris clone made in pygame
 . Added visual for showing the next 6 pieces
 . Fixed bug where a new tetronimo wouldnt spawn immediately after hard dropping
 . Added sounds
+
+08/04/2020:
+. Added multiplayer functionality
+. Improved menus
