@@ -5,7 +5,7 @@ import json
 
 
 PORT = 9999
-SERVER = "192.168.0.14"
+SERVER = "your ip address"
 ADDR = (SERVER, PORT)
 FORMAT = "utf-8"
 DISCONNECT_MSG = "!DISCONNECT"
