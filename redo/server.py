@@ -5,7 +5,7 @@ import json
 
 
 PORT = 9999
-SERVER = "your ip address"
+SERVER = "192.168.0.14"
 ADDR = (SERVER, PORT)
 FORMAT = "utf-8"
 DISCONNECT_MSG = "!DISCONNECT"
@@ -26,9 +26,9 @@ def handle_client(conn, addr, player):
 			if msg == DISCONNECT_MSG:
 				connected = False
 
-			data = json.loads(msg)
-			grids[str(player)] = data
 			try:
+				data = json.loads(msg)
+				grids[str(player)] = data
 				if threading.activeCount() - 1 == 2:
 					if player == 1:
 						reply = json.dumps(grids["2"])
