@@ -4,8 +4,8 @@ import json
 
 
 
-PORT = 5050
-SERVER = socket.gethostbyname(socket.gethostname())
+PORT = 9999
+SERVER = "192.168.0.14"
 ADDR = (SERVER, PORT)
 FORMAT = "utf-8"
 DISCONNECT_MSG = "!DISCONNECT"
@@ -28,17 +28,17 @@ def handle_client(conn, addr, player):
 
 			data = json.loads(msg)
 			grids[str(player)] = data
-			if threading.activeCount() - 1 == 2:
-				if player == 1:
-					reply = json.dumps(grids["2"])
-				elif player == 2:
-					reply = json.dumps(grids["1"])
-				print(reply)
-				conn.send(reply.encode(FORMAT))
+			try:
+				if threading.activeCount() - 1 == 2:
+					if player == 1:
+						reply = json.dumps(grids["2"])
+					elif player == 2:
+						reply = json.dumps(grids["1"])
+					
+					conn.send(reply.encode(FORMAT))
+			except:
+				pass
 			
-			# except:
-			# 	reply = "not ready"
-			# 	conn.send(reply.encode(FORMAT))
 		
 			
 			
@@ -60,7 +60,7 @@ def start():
 			player_count += 1
 			thread = threading.Thread(target=handle_client, args=(conn, addr, player_count))
 			thread.start()
-			# print(f"Active Connections: {threading.activeCount() - 1}")
+			print(f"Active Connections: {threading.activeCount() - 1}")
 			
 		
 

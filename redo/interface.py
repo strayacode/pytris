@@ -13,6 +13,7 @@ class Button:
 		self.fg = fg
 		self.text = text
 		self.window = window
+		self.hidden = False
 		self.draw()
 		
 
@@ -29,6 +30,10 @@ class Button:
 				return True
 
 		return False
+
+	def hide(self):
+		self.hidden = True
+
 
 
 

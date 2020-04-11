@@ -674,6 +674,7 @@ def multiplayer_modern_mode():
 		
 
 		p1.draw_board()
+		p2.draw_board()
 		piece.draw_shadow()
 		piece.update_grid()
 		p1.display_info()
@@ -683,7 +684,6 @@ def multiplayer_modern_mode():
 		try:
 			p2data = json.loads(p2data)
 			p2.grid = p2data
-			p2.draw_board()
 			p2.draw_grid()
 		except TypeError:
 			pass
